@@ -53,7 +53,7 @@ function enumerateFiles() {
 
 			if (config.states) {
 				_.each(config.states, function (statePath, stateName) {
-					var derivedFile = File(Path.join(getPath(statePath), baseName));
+					var derivedFile = new File(Path.join(getPath(statePath), baseName));
 					if (derivedFile.exists) {
 						states[stateName] = derivedFile;
 					}
@@ -301,6 +301,7 @@ function create(jobs, dimensions, align, ppl) {
 
 
 function main() {
+/*jslint evil: true*/
 	var configFile = File.openDialog("Select config JSON"),
 		configText;
 
@@ -312,7 +313,7 @@ function main() {
 		} else {
 			throw new Error("Couldn't open " + configFile.fsName + " for reading: " + configFile.error);
 		}
-		return create(enumerateFiles(), config.dimensions, config.align, config.ppl);
+		create(enumerateFiles(), config.dimensions, config.align, config.ppl);
 	} else {
 		$.writeln("Cancelled");
 	}
