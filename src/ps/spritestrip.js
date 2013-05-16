@@ -14,6 +14,7 @@
 */
 require([
 	"ps/spritestrip/NestedStyle",
+	"ps/spritestrip/makeConfig",
 	"es/CSS",
 	"es/FileFilterUtil",
 	"es/Path",
@@ -22,6 +23,7 @@ require([
 ],
 function (
 	NestedStyle,
+	makeConfig,
 	CSS,
 	FileFilterUtil,
 	Path,
@@ -31,21 +33,13 @@ function (
 "use strict";
 
 
-var config;
-
-
-function getPath(relPath) {
-	return Path.join(config.base, relPath);
-}
-
-
 function relativePath(path, relativeTo) {
 	return new File(path).getRelativeURI(relativeTo);
 }
 
 
-function enumerateFiles() {
-	var masterFolder = new Folder(getPath(config.master)),
+function enumerateFiles(masterPath, statePaths) {
+	var masterFolder = new Folder(masterPath),
 		masterFiles = masterFolder.getFiles(FileFilterUtil.getBitmapFilter()),
 		fileJobs = _.map(masterFiles, function (masterFile) {
 			var baseName = masterFile.name,
@@ -53,9 +47,9 @@ function enumerateFiles() {
 					"": masterFile
 				};
 
-			if (config.states) {
-				_.each(config.states, function (statePath, stateName) {
-					var derivedFile = new File(Path.join(getPath(statePath), baseName));
+			if (statePaths) {
+				_.each(statePaths, function (statePath, stateName) {
+					var derivedFile = new File(Path.join(statePath, baseName));
 					if (derivedFile.exists) {
 						states[stateName] = derivedFile;
 					}
@@ -254,8 +248,18 @@ function saveImage(document, path) {
 }
 
 
-function create(jobs, dimensions, align, ppl) {
-	var sheetSize = calcSheetSize(jobs, dimensions),
+function run(config) {
+	var jobs = enumerateFiles(config.master, config.states),
+		dimensions = config.dimensions,
+		align = config.align,
+		ppl = config.ppl,
+
+		outTextPath = config.output.text,
+		outTextBase = config.output.textBase,
+		outImagePath = config.output.image,
+		topRule = config.output.rule,
+
+		sheetSize = calcSheetSize(jobs, dimensions),
 		sheetDoc = createDoc(sheetSize),
 		imageNum = 0,
 		results = [ ],
@@ -278,16 +282,14 @@ function create(jobs, dimensions, align, ppl) {
 		});
 	});
 
-	saveImage(sheetDoc, getPath(config.output.image));
+	saveImage(sheetDoc, outImagePath);
 
 	cssText = generateStyle(
-		config.output.rule,
-		relativePath(
-			getPath(config.output.image),
-			getPath(config.output.textBase || config.output.text)),
+		topRule,
+		relativePath(outImagePath, outTextBase),
 		sheetSize, results, ppl);
 
-	cssFile = new File(getPath(config.output.text));
+	cssFile = new File(outTextPath);
 	cssFile.encoding = "UTF-8";
 	cssFile.lineFeed = "Unix";
 	if (cssFile.open("w")) {
@@ -304,17 +306,19 @@ function create(jobs, dimensions, align, ppl) {
 
 function main() {
 	var configFile = File.openDialog("Select config JSON"),
-		configText;
+		configText,
+		config;
 
 	if (configFile) {
 		if (configFile.open("r")) {
 			configText = configFile.read();
 			configFile.close();
-			config = JSON.parse(configText);
+			config = makeConfig(
+				JSON.parse(configText), Path.dirName(configFile.fsName));
+			run(config);
 		} else {
 			throw new Error("Couldn't open " + configFile.fsName + " for reading: " + configFile.error);
 		}
-		create(enumerateFiles(), config.dimensions, config.align, config.ppl);
 	} else {
 		$.writeln("Cancelled");
 	}
