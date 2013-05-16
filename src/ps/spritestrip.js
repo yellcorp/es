@@ -17,6 +17,7 @@ require([
 	"es/CSS",
 	"es/FileFilterUtil",
 	"es/Path",
+	"json",
 	"underscore"
 ],
 function (
@@ -24,6 +25,7 @@ function (
 	CSS,
 	FileFilterUtil,
 	Path,
+	JSON,
 	_
 ) {
 "use strict";
@@ -301,7 +303,6 @@ function create(jobs, dimensions, align, ppl) {
 
 
 function main() {
-/*jslint evil: true*/
 	var configFile = File.openDialog("Select config JSON"),
 		configText;
 
@@ -309,7 +310,7 @@ function main() {
 		if (configFile.open("r")) {
 			configText = configFile.read();
 			configFile.close();
-			config = eval(configText);
+			config = JSON.parse(configText);
 		} else {
 			throw new Error("Couldn't open " + configFile.fsName + " for reading: " + configFile.error);
 		}
