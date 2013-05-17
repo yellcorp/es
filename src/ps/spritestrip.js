@@ -304,21 +304,28 @@ function run(config) {
 }
 
 
-function main() {
-	var configFile = File.openDialog("Select config JSON"),
-		configText,
+function runFile(configFile) {
+	var configText,
 		config;
 
-	if (configFile) {
-		if (configFile.open("r")) {
-			configText = configFile.read();
-			configFile.close();
-			config = makeConfig(
-				JSON.parse(configText), Path.dirName(configFile.fsName));
-			run(config);
-		} else {
-			throw new Error("Couldn't open " + configFile.fsName + " for reading: " + configFile.error);
-		}
+	$.writeln(configFile.fsName);
+	if (configFile.open("r")) {
+		configText = configFile.read();
+		configFile.close();
+		config = makeConfig(
+			JSON.parse(configText), Path.dirName(configFile.fsName));
+		run(config);
+	} else {
+		$.writeln("Couldn't open " + configFile.fsName + " for reading: " + configFile.error);
+	}
+}
+
+
+function main() {
+	var configFiles = File.openDialog("Select config JSON", null, true);
+
+	if (configFiles) {
+		_.each(configFiles, runFile);
 	} else {
 		$.writeln("Cancelled");
 	}
