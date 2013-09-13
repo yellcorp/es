@@ -1,6 +1,7 @@
 /*global
     $,
     app,
+    currentFormatToTime,
     prompt,
     KeyframeInterpolationType
 */
@@ -33,30 +34,6 @@ require([
             avItem.frameRate);
     }
 
-    function parseTimecode(str, frameRate) {
-        var units = [ 3600, 60, 1, 1 / frameRate ],
-            values, isNegative,
-            cUnit, cValue, result = 0;
-
-        str = StringUtil.trim(str);
-        isNegative = StringUtil.startsWith(str, "-");
-        if (isNegative) {
-            str = StringUtil.stripStart(str, "-");
-        }
-        values = _.map(str.split(":"), StringUtil.trim);
-        if (values.length > units.length) {
-            throw new Error("Too many units in timecode string");
-        }
-        while (values.length > 0) {
-            cUnit = units.pop();
-            cValue = values.pop();
-            if (cValue) {
-                result += cUnit * parseFloat(cValue);
-            }
-        }
-        return isNegative ? -result : result;
-    }
-
     function parseTimecodeRange(str, frameRate) {
         var hyphen, start, end;
 
@@ -66,10 +43,10 @@ require([
         hyphen = str.indexOf("-", 1);
 
         if (hyphen >= 1) {
-            start = parseTimecode(str.slice(0, hyphen), frameRate);
-            end = parseTimecode(str.slice(hyphen + 1), frameRate);
+            start = currentFormatToTime(str.slice(0, hyphen), frameRate, false);
+            end = currentFormatToTime(str.slice(hyphen + 1), frameRate, false);
         } else {
-            start = end = parseTimecode(str, frameRate);
+            start = end = currentFormatToTime(str, frameRate, false);
         }
 
         if (isFinite(start) && isFinite(end)) {
