@@ -2,8 +2,9 @@
     $,
     app,
     currentFormatToTime,
+    KeyframeInterpolationType,
     prompt,
-    KeyframeInterpolationType
+    timeToCurrentFormat
 */
 require([
     "es/StringUtil",
@@ -76,7 +77,11 @@ require([
     }
 
     function getTimecodeRanges(item) {
-        var response = prompt("Enter timecodes to keep for " + item.name);
+        var response = prompt(
+            "Enter timecodes to keep for " + item.name,
+            timeToCurrentFormat(0, item.frameRate, false) +
+                "-" +
+                timeToCurrentFormat(item.duration, item.frameRate, false) );
         return response ? parseTimecodeRanges(response, item.frameRate) : null;
     }
 
