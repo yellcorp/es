@@ -1,9 +1,7 @@
 /*global
 	$,
 	app,
-	AVItem,
 	BlendingMode,
-	FolderItem,
 	TrackMatteType
 */
 require([
