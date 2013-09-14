@@ -42,6 +42,17 @@ require([
 		return a;
 	}
 
+	function findOrCreateFolder(parentFolder, folderName) {
+		var i, item;
+		for (i = 0; i < parentFolder.items.length; i++) {
+			item = parentFolder.items[i];
+			if (item.name === folderName && item.typeName === "Folder") {
+				return item;
+			}
+		}
+		return parentFolder.items.addFolder(folderName);
+	}
+
 	function createCompMatching(avItem, name, inFolder) {
 		return inFolder.items.addComp(
 			name,
@@ -140,7 +151,7 @@ require([
 
 	function processSingleItem(item) {
 		var parent = item.parentFolder,
-			workFolder = parent.items.addFolder(WORK_FOLDER_NAME),
+			workFolder = findOrCreateFolder(parent, WORK_FOLDER_NAME),
 			diffComp = createDiffComp(item, workFolder),
 			deltaComp = createDeltaComp(item, diffComp, workFolder),
 			fillComp = createFillComp(deltaComp, item.name + " dcrunched", parent);
