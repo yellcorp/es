@@ -45,7 +45,7 @@ require([
 	function findOrCreateFolder(parentFolder, folderName) {
 		var i, item;
 		for (i = 0; i < parentFolder.items.length; i++) {
-			item = parentFolder.items[i];
+			item = parentFolder.items[i + 1];
 			if (item.name === folderName && item.typeName === "Folder") {
 				return item;
 			}
