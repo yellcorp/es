@@ -109,12 +109,11 @@ require([
 
 	function createDiffComp(item, folder) {
 		var comp = createCompMatching(item, item.name + " diff", folder),
-			zeroLayer = comp.layers.add(item),
+			zeroLayer = comp.layers.add(item), // var unused but side-effect required
 			oneLayer = comp.layers.add(item),
 
 			lumaLayer = createSolidMatching(
 				item, item.name + " diff adjustment", [1, 1, 1], comp, folder),
-			lumaEffect,
 
 			levelLayer = comp.layers.add(lumaLayer.source),
 
@@ -126,7 +125,7 @@ require([
 		applyLumaEffect(lumaLayer);
 		applyThresholdEffect(levelLayer, 0);
 
-		resetLayer.opacity.expression = 
+		resetLayer.opacity.expression =
 			RESET_TEMPLATE.replace("{}", item.frameRate * RESET_INTERVAL_SEC);
 
 		return comp;
@@ -135,7 +134,7 @@ require([
 	function createDeltaComp(item, mask, folder) {
 		var comp = createCompMatching(item, item.name + " delta", folder),
 			sourceLayer = comp.layers.add(item),
-			maskLayer = comp.layers.add(mask);
+			maskLayer = comp.layers.add(mask); // var unused but side-effect required
 
 		sourceLayer.trackMatteType = TrackMatteType.LUMA;
 		return comp;

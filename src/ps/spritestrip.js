@@ -130,7 +130,7 @@ function layerTranslateAbsolute(layer, x, y) {
 		ty = y.as("px");
 
 	layer.translate(
-		new UnitValue(Math.round(tx - sx), "px"), 
+		new UnitValue(Math.round(tx - sx), "px"),
 		new UnitValue(Math.round(ty - sy), "px")
 	);
 }
@@ -174,8 +174,8 @@ function insertIntoSheet(source, target, dimensions, align, index) {
 		}, align);
 
 	layerTranslateAbsolute(
-		croppedLayer, 
-		new UnitValue(alignedCropPosition.x, "px"), 
+		croppedLayer,
+		new UnitValue(alignedCropPosition.x, "px"),
 		new UnitValue(alignedCropPosition.y, "px"));
 
 	copyMergedDocument(cropper);
@@ -194,8 +194,8 @@ function insertIntoSheet(source, target, dimensions, align, index) {
 		pixelRect(situatedLayer.bounds), targetPosition, align);
 
 	layerTranslateAbsolute(
-		situatedLayer, 
-		new UnitValue(situatedPosition.x, "px"), 
+		situatedLayer,
+		new UnitValue(situatedPosition.x, "px"),
 		new UnitValue(situatedPosition.y, "px"));
 
 	_.each([ flatSource, cropper ], closeWithoutSaving);
