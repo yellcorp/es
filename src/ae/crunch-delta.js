@@ -5,8 +5,10 @@
 	TrackMatteType
 */
 require([
+	"es/ae/AEUtil",
 	"underscore"
 ], function (
+	AEUtil,
 	_
 ) {
 	"use strict";
@@ -33,14 +35,6 @@ require([
 		ECHO_OPERATOR_FRONT = 6,
 
 		RESET_TEMPLATE = "timeToFrames() % ({}) === 0 ? 100 : 0";
-
-	function aeCollToArray(collection) {
-		var a = [ ], i;
-		for (i = 0; i < collection.length; i++) {
-			a.push(collection[i + 1]);
-		}
-		return a;
-	}
 
 	function findOrCreateFolder(parentFolder, folderName) {
 		var i, item;
@@ -166,7 +160,7 @@ require([
 				processSingleItem(item);
 				break;
 			case "Folder":
-				processItems(aeCollToArray(item.items));
+				processItems(AEUtil.collectionToArray(item.items));
 				break;
 			default:
 				// ???

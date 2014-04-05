@@ -8,23 +8,17 @@
 */
 require([
     "es/StringUtil",
+    "es/ae/AEUtil",
     "underscore"
 ], function (
     StringUtil,
+    AEUtil,
     _
 ) {
     "use strict";
 
     var HANDLE_SECONDS = 1.5,
         TIME_REMAP = "ADBE Time Remapping";
-
-    function aeCollToArray(collection) {
-        var a = [ ], i;
-        for (i = 0; i < collection.length; i++) {
-            a.push(collection[i + 1]);
-        }
-        return a;
-    }
 
     function createCompMatching(avItem, name, inFolder) {
         return inFolder.items.addComp(
@@ -124,7 +118,7 @@ require([
                 processSingleItem(item);
                 break;
             case "Folder":
-                processItems(aeCollToArray(item.items));
+                processItems(AEUtil.collectionToArray(item.items));
                 break;
             default:
                 // ???
